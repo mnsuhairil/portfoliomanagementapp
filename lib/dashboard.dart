@@ -74,13 +74,14 @@ class _DashboardPageState extends State<DashboardPage> {
           label: Text(
             _months[index],
             style: TextStyle(
-              color: isSelected ? Colors.white : Color(0xFF7484B6),
+              color: isSelected ? Colors.white : const Color(0xFF7484B6),
             ),
           ),
-          backgroundColor: isSelected ? Color(0xFF7484B6) : Color(0xFF414C82),
+          backgroundColor:
+              isSelected ? const Color(0xFF7484B6) : const Color(0xFF414C82),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
-            side: BorderSide(color: Color(0xFF7484B6)),
+            side: const BorderSide(color: Color(0xFF7484B6)),
           ),
         ),
       ),
