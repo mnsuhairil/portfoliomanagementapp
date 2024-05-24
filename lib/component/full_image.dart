@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:url_launcher/url_launcher.dart'; // Import for image carousel
 import 'package:photo_view/photo_view.dart';
 
 class FullScreenImage extends StatelessWidget {
