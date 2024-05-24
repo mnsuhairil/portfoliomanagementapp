@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import the intl package for date formatting
+import 'package:firebase_database/firebase_database.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:portfoliomanagementapp/component/full_image.dart';
+import 'package:portfoliomanagementapp/model/project_model.dart';
+import 'package:portfoliomanagementapp/project_detail_page.dart';
+// import 'package:portfoliomanagementapp/add_project_page.dart'; // Import AddProjectPage
 
 class ProjectPage extends StatefulWidget {
   const ProjectPage({Key? key}) : super(key: key);
@@ -9,169 +14,222 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
-  // Sample project data
-  List<Map<String, dynamic>> projects = [
-    {
-      'title': 'Project Alpha',
-      'status': 'In Progress',
-      'priority': 'High',
-      'timeline': DateTime(2023, 12, 31), // Store as DateTime
-      'teamMembers': 3,
-    },
-    {
-      'title': 'Project Beta',
-      'status': 'Completed',
-      'priority': 'Medium',
-      'timeline': DateTime(2023, 9, 15), // Store as DateTime
-      'teamMembers': 2,
-    },
-    {
-      'title': 'Project Gamma',
-      'status': 'Pending',
-      'priority': 'Low',
-      'timeline': DateTime(2024, 3, 10), // Store as DateTime
-      'teamMembers': 1,
-    },
-    {
-      'title': 'Project Gamma',
-      'status': 'Pending',
-      'priority': 'Low',
-      'timeline': DateTime(2024, 3, 10), // Store as DateTime
-      'teamMembers': 1,
-    },
-    {
-      'title': 'Project Gamma',
-      'status': 'Pending',
-      'priority': 'Low',
-      'timeline': DateTime(2024, 3, 10), // Store as DateTime
-      'teamMembers': 1,
-    },
-    {
-      'title': 'Project Gamma',
-      'status': 'Pending',
-      'priority': 'Low',
-      'timeline': DateTime(2024, 3, 10), // Store as DateTime
-      'teamMembers': 1,
-    },
-    {
-      'title': 'Project Gamma',
-      'status': 'Pending',
-      'priority': 'Low',
-      'timeline': DateTime(2024, 3, 10), // Store as DateTime
-      'teamMembers': 1,
-    },
-  ];
+  // Create a reference to the Firebase database
+  final databaseRef = FirebaseDatabase.instance
+      .ref('personalAppDatabase/projects'); // Adjust path as needed
+  List<ProjectModel> projects = []; // List to store project data
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProjects(); // Load projects from Firebase on initialization
+  }
+
+  Future<void> _loadProjects() async {
+    final snapshot = await databaseRef.get();
+
+    if (snapshot.exists) {
+      // Cast the snapshot.value to a Map<String, dynamic>
+      final data = (snapshot.value as Map).cast<String, dynamic>();
+
+      projects = data.entries.map((entry) {
+        // Cast entry.value to Map<String, dynamic>
+        final projectData = (entry.value as Map).cast<String, dynamic>();
+
+        // Parse timeline data
+        final startTimeString = projectData['timeline']['start'];
+        final endTimeString = projectData['timeline']['end'];
+        final startDateTime = startTimeString;
+        final endDateTime = endTimeString;
+
+        // Get project images
+        final images = projectData['images'] != null
+            ? (projectData['images'] as List)
+                .cast<String>() // Correct type cast
+            : [];
+
+        return ProjectModel(
+          key: entry.key.toString(),
+          name: projectData['name'],
+          description: projectData['description'],
+          core: projectData['core'],
+          projectType: projectData['project_type'],
+          status: projectData['status'],
+          priority: projectData['priority'],
+          teamMember: projectData['team_member'],
+          timelineStart: startDateTime,
+          timelineEnd: endDateTime,
+          displayedImage: projectData['displayed_image'],
+          repositoryLink: projectData['repository_link'],
+          youtubeLink: projectData['youtube_link'],
+          images: images, // Add images to ProjectModel
+        );
+      }).toList();
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: projects.length,
-      itemBuilder: (context, index) {
-        final project = projects[index];
-        return ProjectCard(
-          title: project['title'],
-          status: project['status'],
-          priority: project['priority'],
-          timeline: project['timeline'],
-          teamMembers: project['teamMembers'],
-        );
-      },
+    return Scaffold(
+      body: ListView.builder(
+        itemCount: projects.length,
+        itemBuilder: (context, index) {
+          final project = projects[index];
+          return ProjectCard(project: project);
+        },
+      ),
     );
   }
 }
 
 class ProjectCard extends StatelessWidget {
-  final String title;
-  final String status;
-  final String priority;
-  final DateTime timeline; // Use DateTime for timeline
-  final int teamMembers;
+  final ProjectModel project;
 
-  const ProjectCard({
-    Key? key,
-    required this.title,
-    required this.status,
-    required this.priority,
-    required this.timeline,
-    required this.teamMembers,
-  }) : super(key: key);
+  const ProjectCard({Key? key, required this.project}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+      clipBehavior: Clip.antiAlias, // Improve corner clipping
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image Carousel (Responsive)
+          Container(
+            // Wrap the Stack with a Container
+            decoration: const BoxDecoration(
+                color: Color.fromARGB(
+                    12, 158, 158, 158) // Set the background color
                 ),
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    // Handle dropdown selection (e.g., show dialog, navigate)
-                    print('Selected: $value');
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'Edit',
-                      child: Text('Edit'),
-                    ),
-                    const PopupMenuItem(
-                      value: 'Delete',
-                      child: Text('Delete'),
-                    ),
-                  ],
-                  child: const Icon(Icons.more_vert),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Stack(
               children: [
-                _ProjectDetail(label: 'Status', value: status),
-                _ProjectDetail(label: 'Priority', value: priority),
-                _ProjectDetail(
-                    label: 'Timeline',
-                    value: DateFormat('dd-MM').format(timeline)), // Format date
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.person),
-                    const SizedBox(width: 8),
-                    Text('$teamMembers Team Members'),
-                  ],
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to project details screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ProjectDetailsPage(),
+                CarouselSlider.builder(
+                  itemCount: project.images.length,
+                  itemBuilder: (context, index, realIndex) {
+                    final image = project.images[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FullScreenImage(
+                              imageUrl: image,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Image.network(
+                        image,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 200,
                       ),
                     );
                   },
-                  child: const Text('View Details'),
+                  options: CarouselOptions(
+                    height: 200,
+                    viewportFraction: 1.0,
+                    autoPlay: true,
+                    pauseAutoPlayOnManualNavigate: true,
+                    pauseAutoPlayOnTouch: true,
+                    enableInfiniteScroll: true,
+                    enlargeCenterPage: false,
+                  ),
+                ),
+                // Project Name Overlay
+                Positioned(
+                  bottom: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.blue, // Set a background color
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(50.0),
+                          bottomRight: Radius.circular(
+                              0.0)), // Optional: Add rounded corners
+                    ),
+                    padding: const EdgeInsets.all(16.0), // Add padding
+                    child: Text(
+                      project.name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+
+          // Project Details
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Status, Priority, Timeline
+                Container(
+                  // Wrap the row with a Container
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                        10), // Optional: Add rounded corners
+                  ),
+                  padding: const EdgeInsets.all(10), // Add padding
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _ProjectDetail(label: 'Status', value: project.status),
+                      _ProjectDetail(
+                          label: 'Priority', value: project.priority),
+                      _ProjectDetail(
+                        label: 'Timeline',
+                        value:
+                            '${project.timelineStart} - ${project.timelineEnd}',
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Team Members and Details Button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.person),
+                        const SizedBox(width: 8),
+                        Text('${project.teamMember} Team Members'),
+                      ],
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue, // Button color
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProjectDetailsPage(
+                              project: project,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text('View Details',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -199,23 +257,6 @@ class _ProjectDetail extends StatelessWidget {
         const SizedBox(height: 4),
         Text(value),
       ],
-    );
-  }
-}
-
-// Placeholder for Project Details Page
-class ProjectDetailsPage extends StatelessWidget {
-  const ProjectDetailsPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Project Details'),
-      ),
-      body: const Center(
-        child: Text('Project Details Page'),
-      ),
     );
   }
 }

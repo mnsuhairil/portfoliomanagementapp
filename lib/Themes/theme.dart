@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 final ThemeData appTheme = ThemeData(
   primarySwatch: Colors.blue,
-  scaffoldBackgroundColor: Color(0xFF414C82), // Updated background color
+  scaffoldBackgroundColor: const Color(0xFF414C82), // Updated background color
   appBarTheme: const AppBarTheme(
     color: Color(0xFF414C82), // Updated app bar color
     centerTitle: true,
@@ -13,39 +13,39 @@ final ThemeData appTheme = ThemeData(
   textTheme: TextTheme(
     bodyMedium: TextStyle(color: Colors.blue[900]), // Text color
   ),
-  cardTheme: CardTheme(
+  cardTheme: const CardTheme(
     color: Colors.white, // Card background color
     elevation: 4, // Card elevation
-    margin: const EdgeInsets.symmetric(horizontal: 8.0), // Card margin
+    margin: EdgeInsets.symmetric(horizontal: 8.0), // Card margin
   ),
-  iconTheme: IconThemeData(
-    color: Color(0x8999D7), // Icon color
+  iconTheme: const IconThemeData(
+    color: Color(0x008999d7), // Icon color
   ),
-  floatingActionButtonTheme: FloatingActionButtonThemeData(
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Colors.blue, // FAB background color
   ),
-  inputDecorationTheme: InputDecorationTheme(
+  inputDecorationTheme: const InputDecorationTheme(
     border: OutlineInputBorder(
       borderSide: BorderSide(color: Colors.blue), // Border color
     ),
   ),
-  buttonTheme: ButtonThemeData(
+  buttonTheme: const ButtonThemeData(
     buttonColor: Colors.blue, // Button color
     textTheme: ButtonTextTheme.primary,
   ),
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
-      primary: Colors.blue, // Text button color
+      foregroundColor: Colors.blue, // Text button color
     ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      primary: Colors.blue, // Elevated button color
+      backgroundColor: Colors.blue, // Elevated button color
     ),
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      primary: Colors.blue, // Outlined button color
+      foregroundColor: Colors.blue, // Outlined button color
     ),
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -57,7 +57,7 @@ final ThemeData appTheme = ThemeData(
     labelColor: Colors.blue, // Tab label color
     unselectedLabelColor: Colors.blue[100], // Unselected tab label color
   ),
-  dividerTheme: DividerThemeData(
+  dividerTheme: const DividerThemeData(
     color: Colors.blue, // Divider color
   ),
   sliderTheme: SliderThemeData(
@@ -65,20 +65,20 @@ final ThemeData appTheme = ThemeData(
     inactiveTrackColor: Colors.blue[100], // Inactive track color
     thumbColor: Colors.blue, // Thumb color
   ),
-  dialogTheme: DialogTheme(
+  dialogTheme: const DialogTheme(
     backgroundColor: Colors.white, // Dialog background color
   ),
-  snackBarTheme: SnackBarThemeData(
+  snackBarTheme: const SnackBarThemeData(
     backgroundColor: Colors.blue, // Snack bar background color
     contentTextStyle: TextStyle(color: Colors.white), // Snack bar text color
   ),
-  bottomSheetTheme: BottomSheetThemeData(
+  bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: Colors.white, // Bottom sheet background color
   ),
-  popupMenuTheme: PopupMenuThemeData(
+  popupMenuTheme: const PopupMenuThemeData(
     color: Colors.white, // Popup menu color
   ),
-  timePickerTheme: TimePickerThemeData(
+  timePickerTheme: const TimePickerThemeData(
     backgroundColor: Colors.white, // Time picker background color
   ),
   textSelectionTheme: TextSelectionThemeData(
@@ -86,7 +86,7 @@ final ThemeData appTheme = ThemeData(
     selectionColor: Colors.blue[100], // Text selection color
     selectionHandleColor: Colors.blue, // Text selection handle color
   ),
-  navigationRailTheme: NavigationRailThemeData(
+  navigationRailTheme: const NavigationRailThemeData(
     backgroundColor: Colors.blue, // Navigation rail background color
   ),
   pageTransitionsTheme: const PageTransitionsTheme(
