@@ -1,9 +1,9 @@
 // lib/applications.dart
 import 'package:flutter/material.dart';
-import 'ManagePorrtfolioPage.dart'; // Import ManagePortfolioPage
+import 'ManagePortfolioPage.dart'; // Import ManagePortfolioPage
 
 Widget createManagePortfolioPage() {
-  return ManagePortfolioPage();
+  return const ManagePortfolioPage();
 }
 
 class ApplicationPage extends StatelessWidget {
@@ -31,7 +31,7 @@ class ApplicationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,

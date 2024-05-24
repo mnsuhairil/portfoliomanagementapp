@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:portfoliomanagementapp/component/appbar/app_bar.dart';
 import 'package:portfoliomanagementapp/component/navigation_bar/bottom_navi.dart';
-import 'Themes/theme.dart'; // Import the theme file
+import 'Themes/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       switch (index) {
         case 0:
-          _title = 'Dashboard';
+          _title = 'Dashboards';
           break;
         case 1:
           _title = 'Applications';
@@ -63,14 +63,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
+        // Use MyAppBar
         title: _title,
         setTitle: _setTitle,
-        onMenuPressed: () {}, // Pass the function to update the title
+        onMenuPressed: () {},
+        showAddButton:
+            _title == 'Projects', // Show add button only on Projects page
       ),
       body: BottomNavigation(
-        setTitle: _setTitle, // Add the required argument 'setTitle'
+        setTitle: _setTitle,
         onTabTapped: _onItemTapped,
-        title: _title, // Pass the title to the BottomNavigation
+        title: _title,
       ),
     );
   }

@@ -54,7 +54,7 @@ class _LineChartSample2State extends State<LineChartViewer> {
     Widget text;
     if (value > 0 && value < 32) {
       if (value == 32) {
-        text = Text('', style: style);
+        text = const Text('', style: style);
       } else {
         text = Text('${value.toInt()}', style: style);
       }

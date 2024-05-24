@@ -73,7 +73,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       case 1:
         return ApplicationPage();
       case 2:
-        return const ProjectPage();
+        return const ProjectPage(); // Pass showAddButton
       default:
         return const DefaultPage();
     }
