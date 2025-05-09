@@ -1,0 +1,2 @@
+C:/Users/phisoft/Documents/GitHub/production/portfoliomanagementapp/android/app/.cxx/RelWithDebInfo/386x2151/x86/CMakeFiles/edit_cache.dir
+C:/Users/phisoft/Documents/GitHub/production/portfoliomanagementapp/android/app/.cxx/RelWithDebInfo/386x2151/x86/CMakeFiles/rebuild_cache.dir
