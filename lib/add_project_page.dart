@@ -465,7 +465,14 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          // Save project data to Firebase
+                          if (_images.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Please add at least one image.')),
+                            );
+                            return;
+                          }
                           _saveProject();
                         }
                       },
@@ -484,15 +491,68 @@ class _AddProjectPageState extends State<AddProjectPage> {
   }
 
   Future<void> _saveProject() async {
-    // Create a new project object with data from the form
+    // Validate numeric fields
+    int? priority = int.tryParse(_priorityController.text);
+    int? status = int.tryParse(_statusController.text);
+    int? teamMember = int.tryParse(_teamMemberController.text);
+
+    if (priority == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Priority must be a number.')),
+      );
+      return;
+    }
+    if (status == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Status must be a number.')),
+      );
+      return;
+    }
+    if (teamMember == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Team Member must be a number.')),
+      );
+      return;
+    }
+    if (_images.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please add at least one image.')),
+      );
+      return;
+    }
+
+    // Upload images and collect URLs
+    List<String> imageUrls = [];
+    final projectKey = databaseRef.push().key;
+
+    for (int i = 0; i < _images.length; i++) {
+      final imageFile = _images[i];
+      final storageImageRef =
+          storageRef.child('Project/images/$projectKey/image${i + 1}');
+      try {
+        final uploadTask = await storageImageRef.putFile(File(imageFile.path));
+        final downloadUrl = await uploadTask.ref.getDownloadURL();
+        imageUrls.add(downloadUrl);
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error uploading image: $e');
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error uploading image: $e')),
+        );
+        return;
+      }
+    }
+
+    // Prepare project data with correct types and structure
     final newProject = {
       'name': _nameController.text,
       'description': _descriptionController.text,
       'core': _coreController.text,
       'project_type': _projectTypeController.text,
-      'status': _statusController.text,
-      'priority': _priorityController.text,
-      'team_member': int.parse(_teamMemberController.text), // Parse to integer
+      'status': status,
+      'priority': priority,
+      'team_member': teamMember,
       'timeline': {
         'start': _timelineStartController.text,
         'end': _timelineEndController.text,
@@ -500,51 +560,19 @@ class _AddProjectPageState extends State<AddProjectPage> {
       'displayed_image': _displayedImageController.text,
       'repository_link': _repositoryLinkController.text,
       'youtube_link': _youtubeLinkController.text,
-      'images': {}, // Initialize the 'images' field as an empty map
+      'images': imageUrls, // List<String>
     };
 
-    // Get a unique key for the project
-    final projectKey = databaseRef.push().key;
-
-    // Upload each image to Firebase Storage and get the download URL
-    for (int i = 0; i < _images.length; i++) {
-      final imageFile = _images[i];
-      final storageImageRef = storageRef.child(
-          'Project/images/$projectKey/image${i + 1}'); // Create storage path
-
-      try {
-        final uploadTask = await storageImageRef.putFile(File(imageFile.path));
-        final downloadUrl = await uploadTask.ref.getDownloadURL();
-
-        // Add the download URL to the 'images' field in the project data
-        if (newProject['images'] != null) {
-          (newProject['images'] as Map<dynamic, dynamic>)[i.toString()] =
-              downloadUrl;
-        }
-      } catch (e) {
-        if (kDebugMode) {
-          print('Error uploading image: $e');
-        }
-        // Handle image upload errors appropriately
-      }
-    }
-
     try {
-      // Update the project data in the Realtime Database with image links
       await databaseRef.child(projectKey!).set(newProject);
-
-      // Success message (optional)
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Project added successfully!')),
       );
-
-      // Navigate back to the previous screen
       Navigator.pop(context);
     } catch (e) {
       if (kDebugMode) {
         print('Error saving project: $e');
       }
-      // Show an error message to the user
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error saving project.')),
       );

@@ -22,6 +22,7 @@ class _ManagePortfolioPageState extends State<ManagePortfolioPage> {
   String _email = "";
   String _aboutMeText = ".";
   String _profileImage = "";
+  String _homeAddress = "";
   File? _pickedImage;
 
   final databaseRef = FirebaseDatabase.instance.ref();
@@ -44,6 +45,7 @@ class _ManagePortfolioPageState extends State<ManagePortfolioPage> {
   final _emailController = TextEditingController();
   final _aboutMeController = TextEditingController();
   final _profileImageController = TextEditingController();
+  final _homeAddressController = TextEditingController();
 
   // Controllers for work experience
   final _workExperienceStartDateController = TextEditingController();
@@ -209,7 +211,9 @@ class _ManagePortfolioPageState extends State<ManagePortfolioPage> {
           _email = data['Biodata']['email'] ?? '';
           _aboutMeText = data['Biodata']['about_me'] ?? '';
           _profileImage = data['Biodata']['profile_image'] ?? '';
-
+          _homeAddress = data['Biodata']['home_address'] ?? '';
+          // Update the controllers with the loaded data
+          _homeAddressController.text = _homeAddress;
           _nameController.text = _name;
           _phoneNumberController.text = _phoneNumber;
           _emailController.text = _email;
@@ -239,6 +243,7 @@ class _ManagePortfolioPageState extends State<ManagePortfolioPage> {
     _skillsController.dispose();
     _socialLinkNameController.dispose();
     _socialLinkUrlController.dispose();
+    _homeAddressController.dispose();
     super.dispose();
   }
 
@@ -253,6 +258,7 @@ class _ManagePortfolioPageState extends State<ManagePortfolioPage> {
         'email': _emailController.text,
         'about_me': _aboutMeController.text,
         'profile_image': _profileImageController.text,
+        'home_address': _homeAddressController.text,
       }).then((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Biodata updated successfully!')),

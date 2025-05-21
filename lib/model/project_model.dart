@@ -4,8 +4,8 @@ class ProjectModel {
   final String description;
   final String core;
   final String projectType;
-  final String status;
-  final String priority;
+  final int status;
+  final int priority;
   final int teamMember;
   final String timelineStart;
   final String timelineEnd;

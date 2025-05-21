@@ -237,7 +237,7 @@ class ProjectCard extends StatelessWidget {
 
 class _ProjectDetail extends StatelessWidget {
   final String label;
-  final String value;
+  final Object value;
 
   const _ProjectDetail({
     Key? key,
@@ -255,7 +255,7 @@ class _ProjectDetail extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
-        Text(value),
+        Text(value.toString()),
       ],
     );
   }
